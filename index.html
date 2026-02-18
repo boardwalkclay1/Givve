@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Giveaway Carnival</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="theme-carnival">
+  <header class="site-header">
+    <h1>Donation-Only Giveaway Carnival 🎉</h1>
+    <p>Every donation is an entry. Hit the magic donor number, win the prize.</p>
+  </header>
+
+  <nav class="main-nav">
+    <a href="app.html">Donate & Enter</a>
+    <a href="suggest.html">Suggest an Item</a>
+    <a href="vote.html">Vote on Next Item</a>
+    <a href="account.html">My Account</a>
+    <a href="winners.html">Winners Wall</a>
+  </nav>
+
+  <main>
+    <section id="rules">
+      <h2>How It Works</h2>
+      <ol>
+        <li>Sign in or create an account.</li>
+        <li>Choose a donation tier: $10, $20, $30, $40, or $50.</li>
+        <li>Your donation gets a global donor number.</li>
+        <li>If your number matches a prize’s winner number, you instantly win.</li>
+        <li>All donations go directly to our PayPal to fuel bigger causes and prizes.</li>
+      </ol>
+    </section>
+
+    <section id="prizes-section">
+      <h2>Current & Upcoming Prizes</h2>
+      <div id="prize-reel" class="prize-reel scrolling">
+        <!-- populated later by JS -->
+      </div>
+    </section>
+  </main>
+
+  <div id="winner-banner"></div>
+  <div id="confetti-layer"></div>
+
+  <script src="js/main.js" type="module"></script>
+</body>
+</html>

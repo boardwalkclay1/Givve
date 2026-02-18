@@ -1,0 +1,197 @@
+:root {
+  --blue: #2f6fff;
+  --purple: #7b3cff;
+  --yellow: #ffd93b;
+  --white: #ffffff;
+  --bg-dark: #05051a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.theme-carnival {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(circle at top, var(--purple), var(--bg-dark));
+  color: var(--white);
+  min-height: 100vh;
+}
+
+.site-header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+.site-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2.4rem;
+  color: var(--yellow);
+  text-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
+.main-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0 1rem 1.5rem;
+}
+
+.main-nav a {
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  font-size: 0.9rem;
+}
+
+main {
+  padding: 0 1rem 3rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 1.5rem;
+}
+
+.card,
+.card-list .card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.card-list {
+  display: grid;
+  gap: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="url"],
+textarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: none;
+  margin-top: 0.25rem;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  background: linear-gradient(135deg, var(--yellow), var(--blue));
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+/* Tiers */
+.tier-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tier-btn {
+  flex: 1 1 90px;
+}
+
+/* Prize reel */
+.prize-reel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+.prize-card {
+  min-width: 220px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 0.75rem;
+}
+
+/* Badges */
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.badge-placeholder {
+  opacity: 0.7;
+}
+
+/* Winner banner */
+#winner-banner {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(150%);
+  transition: transform 0.4s ease-out;
+  z-index: 50;
+}
+
+#winner-banner.visible {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Confetti layer */
+#confetti-layer {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, var(--yellow) 2px, transparent 2px),
+    radial-gradient(circle, var(--blue) 2px, transparent 2px),
+    radial-gradient(circle, var(--purple) 2px, transparent 2px);
+  background-size: 40px 40px;
+  opacity: 0.15;
+  z-index: -1;
+}
+
+/* Clown pop-ins */
+.clown-pop {
+  position: fixed;
+  bottom: -50px;
+  left: 10%;
+  font-size: 3rem;
+  animation: clown-pop 3s ease-out forwards;
+  pointer-events: none;
+  z-index: 60;
+}
+
+@keyframes clown-pop {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  20% { opacity: 1; }
+  60% { transform: translateY(-120px) scale(1); }
+  100% { transform: translateY(-200px) scale(0.8); opacity: 0; }
+}

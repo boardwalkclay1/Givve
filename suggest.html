@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Suggest an Item</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="theme-carnival">
+  <header class="site-header">
+    <h1>Suggest a Future Prize 🎁</h1>
+    <p>Help shape the next wave of giveaways.</p>
+  </header>
+
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="app.html">Donate</a>
+    <a href="vote.html">Vote</a>
+    <a href="account.html">My Account</a>
+    <a href="winners.html">Winners</a>
+  </nav>
+
+  <main>
+    <section>
+      <form id="suggest-form" class="card">
+        <label>
+          Title
+          <input type="text" name="title" required />
+        </label>
+        <label>
+          Description
+          <textarea name="description" rows="4" required></textarea>
+        </label>
+        <label>
+          Image URL (optional)
+          <input type="url" name="imageUrl" />
+        </label>
+        <button type="submit">Submit Suggestion 🎈</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="confetti-layer"></div>
+
+  <script src="js/main.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="theme-carnival">
+  <header class="site-header">
+    <h1>My Account 🤡</h1>
+    <p>Track your donations, entries, badges, and wins.</p>
+  </header>
+
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="app.html">Donate</a>
+    <a href="suggest.html">Suggest</a>
+    <a href="vote.html">Vote</a>
+    <a href="winners.html">Winners</a>
+  </nav>
+
+  <main>
+    <section class="card">
+      <h2>Sign In / Sign Up</h2>
+      <p>Auth wiring comes later. For now, this is a placeholder.</p>
+    </section>
+
+    <section class="card">
+      <h2>My Donations</h2>
+      <ul id="my-donations">
+        <li>Donations will appear here once backend is connected.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>My Badges</h2>
+      <div id="my-badges" class="badge-row">
+        <span class="badge badge-placeholder">Future Badge</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>My Wins</h2>
+      <ul id="my-wins">
+        <li>Wins will appear here when you hit those magic numbers.</li>
+      </ul>
+    </section>
+  </main>
+
+  <div id="confetti-layer"></div>
+
+  <script src="js/main.js" type="module"></script>
+</body>
+</html>

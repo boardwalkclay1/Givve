@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Enter the Giveaway</title>
+  <title>Enter Giveaway</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="css/styles.css" />
+  <!-- YOUR LIVE PAYPAL CLIENT ID -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAlN9-5tKvnvZ0uih-NKHbNh6uaOjtHGSyiejjZp6kiuUPUNdVmhNmxcwqalWbnuPNCdYRdmR4D-NKu_o&currency=USD"></script>
 </head>
 <body class="theme-carnival">
-  <header class="site-header">
+  <header class="hero small-hero">
     <h1>Enter the Giveaway 🎈</h1>
-    <p>Select a donation tier to get your entry number.</p>
+    <p>Select a tier, complete payment, get your donor number.</p>
   </header>
 
-  <nav class="main-nav">
+  <nav class="main-nav glass-nav">
     <a href="index.html">Home</a>
     <a href="suggest.html">Suggest</a>
     <a href="vote.html">Vote</a>
@@ -21,9 +23,9 @@
     <a href="winners.html">Winners</a>
   </nav>
 
-  <main>
-    <section id="tiers">
-      <h2>Donation Tiers</h2>
+  <main class="content">
+    <section class="card glass-card">
+      <h2>Choose Your Tier</h2>
       <div class="tier-grid">
         <button class="tier-btn" data-tier="10">$10 Tier</button>
         <button class="tier-btn" data-tier="20">$20 Tier</button>
@@ -31,23 +33,16 @@
         <button class="tier-btn" data-tier="40">$40 Tier</button>
         <button class="tier-btn" data-tier="50">$50 Tier</button>
       </div>
-      <p class="tier-note">
-        Each donation is a separate entry. Some prizes trigger on specific donor numbers (10th, 20th, etc.).
-      </p>
+      <p class="tier-note">Each donation is a separate entry with its own donor number.</p>
     </section>
 
-    <section id="entry-status">
-      <h2>Your Entry Status</h2>
-      <div id="entry-message">
-        Sign in from the Account page to see your entries and wins.
-      </div>
-      <div id="paypal-button-container">
-        <!-- PayPal buttons will go here later -->
-      </div>
+    <section class="card glass-card">
+      <h2>Payment & Status</h2>
+      <div id="paypal-button-container"></div>
+      <p id="entry-message" class="entry-message">Select a tier to load PayPal.</p>
     </section>
   </main>
 
-  <div id="winner-banner"></div>
   <div id="confetti-layer"></div>
 
   <script src="js/main.js" type="module"></script>

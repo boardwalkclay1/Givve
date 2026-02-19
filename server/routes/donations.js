@@ -1,19 +1,18 @@
 import express from 'express';
 import Donation from '../models/Donation.js';
 import Prize from '../models/Prize.js';
-import User from '../models/User.js';
 
 const router = express.Router();
 
-// Create donation AFTER PayPal payment is confirmed on client
 router.post('/', async (req, res) => {
   try {
     const { userId, amount, tier, paymentId } = req.body;
 
-    // Count existing donations to get next index
+    // Count existing donations to get next donor number
     const count = await Donation.countDocuments({});
     const globalDonationIndex = count + 1;
 
+    // Create donation entry
     const donation = await Donation.create({
       userId: userId || null,
       amount,
@@ -22,13 +21,6 @@ router.post('/', async (req, res) => {
       globalDonationIndex
     });
 
-    // Update user totalDonated
-    if (userId) {
-      await User.findByIdAndUpdate(userId, {
-        $inc: { totalDonated: amount }
-      });
-    }
-
     // Check if this donation hits a prize trigger
     const prize = await Prize.findOne({
       winnerNumber: globalDonationIndex,
@@ -36,27 +28,21 @@ router.post('/', async (req, res) => {
     });
 
     let isWinner = false;
+
     if (prize) {
       isWinner = true;
       prize.status = 'won';
       prize.winnerUserId = userId || null;
       prize.donationId = donation._id;
       await prize.save();
-
-      if (userId) {
-        await User.findByIdAndUpdate(userId, {
-          $push: {
-            wins: {
-              prizeId: prize._id,
-              donationId: donation._id,
-              date: new Date()
-            }
-          }
-        });
-      }
     }
 
-    res.json({ donation, isWinner, prize });
+    res.json({
+      donation,
+      isWinner,
+      prize: isWinner ? prize : null
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Donation failed' });

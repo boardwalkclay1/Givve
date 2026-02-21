@@ -1,52 +1,24 @@
 import express from 'express';
-import Donation from '../models/Donation.js';
-import Prize from '../models/Prize.js';
+import { pool } from '../db.js';
 
 const router = express.Router();
 
+// GET all donations
+router.get('/', async (req, res) => {
+  const result = await pool.query('SELECT * FROM donations ORDER BY created_at DESC');
+  res.json(result.rows);
+});
+
+// ADD a donation
 router.post('/', async (req, res) => {
-  try {
-    const { userId, amount, tier, paymentId } = req.body;
+  const { name, amount } = req.body;
 
-    // Count existing donations to get next donor number
-    const count = await Donation.countDocuments({});
-    const globalDonationIndex = count + 1;
+  const result = await pool.query(
+    'INSERT INTO donations (name, amount) VALUES ($1, $2) RETURNING *',
+    [name, amount]
+  );
 
-    // Create donation entry
-    const donation = await Donation.create({
-      userId: userId || null,
-      amount,
-      tier,
-      paymentId,
-      globalDonationIndex
-    });
-
-    // Check if this donation hits a prize trigger
-    const prize = await Prize.findOne({
-      winnerNumber: globalDonationIndex,
-      status: 'pending'
-    });
-
-    let isWinner = false;
-
-    if (prize) {
-      isWinner = true;
-      prize.status = 'won';
-      prize.winnerUserId = userId || null;
-      prize.donationId = donation._id;
-      await prize.save();
-    }
-
-    res.json({
-      donation,
-      isWinner,
-      prize: isWinner ? prize : null
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Donation failed' });
-  }
+  res.json(result.rows[0]);
 });
 
 export default router;

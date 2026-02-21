@@ -1,28 +1,24 @@
 import express from 'express';
-import Prize from '../models/Prize.js';
+import { pool } from '../db.js';
 
 const router = express.Router();
 
-// Get all prizes
+// GET all prizes
 router.get('/', async (req, res) => {
-  try {
-    const prizes = await Prize.find().sort({ winnerNumber: 1 });
-    res.json(prizes);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to load prizes' });
-  }
+  const result = await pool.query('SELECT * FROM prizes ORDER BY id ASC');
+  res.json(result.rows);
 });
 
-// Seed prizes (run once manually)
-router.post('/seed', async (req, res) => {
-  try {
-    const { prizes } = req.body;
-    await Prize.deleteMany({});
-    const created = await Prize.insertMany(prizes);
-    res.json(created);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to seed prizes' });
-  }
+// ADD a prize
+router.post('/', async (req, res) => {
+  const { title, description } = req.body;
+
+  const result = await pool.query(
+    'INSERT INTO prizes (title, description) VALUES ($1, $2) RETURNING *',
+    [title, description]
+  );
+
+  res.json(result.rows[0]);
 });
 
 export default router;

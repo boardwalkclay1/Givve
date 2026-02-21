@@ -3,13 +3,11 @@ import { pool } from '../db.js';
 
 const router = express.Router();
 
-// GET all prizes
 router.get('/', async (req, res) => {
   const result = await pool.query('SELECT * FROM prizes ORDER BY id ASC');
   res.json(result.rows);
 });
 
-// ADD a prize
 router.post('/', async (req, res) => {
   const { title, description } = req.body;
 

@@ -18,6 +18,33 @@ body.theme-carnival {
   min-height: 100vh;
 }
 
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 3rem 1rem 1.5rem;
+}
+
+.small-hero {
+  padding: 1.5rem 1rem 1rem;
+}
+
+.hero-title {
+  margin: 0 0 0.5rem;
+  font-size: 3rem;
+  background: linear-gradient(135deg, var(--yellow), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin: 0;
+}
+
 .site-header {
   text-align: center;
   padding: 2rem 1rem 1rem;
@@ -49,6 +76,20 @@ body.theme-carnival {
   font-size: 0.9rem;
 }
 
+/* Glass nav / card variants */
+.glass-nav {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-top: 0.75rem;
+}
+
+.glass-nav a {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+}
+
 main {
   padding: 0 1rem 3rem;
   max-width: 960px;
@@ -66,6 +107,13 @@ section {
   padding: 1rem 1.25rem;
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
 
 .card-list {
@@ -113,6 +161,12 @@ button:hover {
 
 .tier-btn {
   flex: 1 1 90px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.tier-btn--active {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 3px var(--yellow);
 }
 
 /* Prize reel */
@@ -120,7 +174,8 @@ button:hover {
   display: flex;
   gap: 1rem;
   overflow-x: auto;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0 1rem;
+  scroll-snap-type: x proximity;
 }
 
 .prize-card {
@@ -128,6 +183,98 @@ button:hover {
   background: rgba(255,255,255,0.08);
   border-radius: 16px;
   padding: 0.75rem;
+  scroll-snap-align: start;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.prize-card img {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.prize-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--yellow);
+}
+
+.prize-value {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.winner-number {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #a3c4ff;
+}
+
+.prize-won {
+  margin: 0;
+  color: #7b3cff;
+  font-weight: 700;
+}
+
+.prize-card--won {
+  opacity: 0.55;
+}
+
+/* Shop buttons */
+.prize-shop-links {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.shop-btn {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+  transition: filter 0.15s;
+}
+
+.shop-btn:hover {
+  filter: brightness(1.1);
+}
+
+.shop-btn--amazon {
+  background: #ff9900;
+  color: #000;
+}
+
+.shop-btn--walmart {
+  background: #0071ce;
+  color: #fff;
+}
+
+/* Entry message */
+.entry-message {
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* How-it-works steps */
+.how-steps {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  line-height: 2;
+}
+
+.how-steps li {
+  margin-bottom: 0.4rem;
 }
 
 /* Badges */
@@ -164,11 +311,12 @@ button:hover {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Confetti layer */
+/* Confetti + floating layer */
 #confetti-layer {
   pointer-events: none;
   position: fixed;
   inset: 0;
+  overflow: hidden;
   background-image:
     radial-gradient(circle, var(--yellow) 2px, transparent 2px),
     radial-gradient(circle, var(--blue) 2px, transparent 2px),
@@ -176,6 +324,39 @@ button:hover {
   background-size: 40px 40px;
   opacity: 0.15;
   z-index: -1;
+}
+
+/* Floating prize icons in background */
+.prize-float {
+  position: absolute;
+  bottom: -3rem;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  animation: prize-float linear infinite;
+  z-index: 0;
+}
+
+@keyframes prize-float {
+  0%   { transform: translateY(0)      rotate(0deg);   opacity: 0;    }
+  8%   { opacity: 0.18; }
+  90%  { opacity: 0.18; }
+  100% { transform: translateY(-110vh) rotate(360deg); opacity: 0;    }
+}
+
+/* Confetti pieces */
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  animation: confetti-fall 1.5s ease-in forwards;
+}
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
 /* Clown pop-ins */

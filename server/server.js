@@ -4,13 +4,21 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import pb from "./lib/pbClient.js";              // PocketBase client
 import donationsRouter from "./routes/donations.js";
 import prizesRouter from "./routes/prizes.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// CORS — lock to your frontend domain
+app.use(
+  cors({
+    origin: process.env.PUBLIC_URL || "*",
+  })
+);
+
 app.use(express.json());
 
 // Resolve directory
@@ -23,7 +31,7 @@ const publicPath = path.resolve(__dirname, "../public");
 // Serve static frontend files
 app.use(express.static(publicPath));
 
-// API routes
+// API routes (PocketBase-powered)
 app.use("/api/donations", donationsRouter);
 app.use("/api/prizes", prizesRouter);
 
@@ -34,6 +42,6 @@ app.get("*", (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`Givve server running on port ${PORT}`);
+});

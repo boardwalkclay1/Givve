@@ -21,17 +21,49 @@ async function initPrizeReel() {
     }
 
     reel.innerHTML = prizes.map(p => `
-      <div class="prize-card">
+      <div class="prize-card ${p.status === 'won' ? 'prize-card--won' : ''}">
         <img src="${p.imageUrl || 'https://via.placeholder.com/200'}" alt="${p.name}" />
         <h3>${p.name}</h3>
-        <p>Value: $${p.value}</p>
-        <p class="winner-number">Winner: #${p.winnerNumber}</p>
-        ${p.status === 'won' ? `<p class="prize-won">Already Won 🎉</p>` : ''}
+        <p class="prize-value">Value: $${p.value}</p>
+        <p class="winner-number">🎯 Winner: donor #${p.winnerNumber || p.winner_number}</p>
+        ${p.status === 'won'
+          ? `<p class="prize-won">Already Won 🎉</p>`
+          : `<div class="prize-shop-links">
+               <a href="${p.amazonUrl}" target="_blank" rel="noopener noreferrer" class="shop-btn shop-btn--amazon">🛒 Amazon</a>
+               <a href="${p.walmartUrl}" target="_blank" rel="noopener noreferrer" class="shop-btn shop-btn--walmart">🛍️ Walmart</a>
+             </div>`
+        }
       </div>
     `).join('');
+
+    // Pass prizes to the floating background renderer.
+    initFloatingPrizes(prizes);
   } catch (err) {
     console.error(err);
     reel.innerHTML = `<p>Error loading prizes.</p>`;
+  }
+}
+
+// ----------------------
+// FLOATING BACKGROUND PRIZES
+// ----------------------
+const FLOAT_COUNT = 18;
+
+function initFloatingPrizes(prizes) {
+  const layer = document.getElementById('confetti-layer');
+  if (!layer || !prizes.length) return;
+
+  const emojis = ['🎁', '🏆', '🎀', '⭐', '🎊', '🎈', '💝', '🌟'];
+
+  for (let i = 0; i < FLOAT_COUNT; i++) {
+    const el = document.createElement('span');
+    el.className = 'prize-float';
+    el.textContent = emojis[i % emojis.length];
+    el.style.left = `${Math.random() * 96}%`;
+    el.style.animationDuration = `${8 + Math.random() * 14}s`;
+    el.style.animationDelay = `${Math.random() * 10}s`;
+    el.style.fontSize = `${1.2 + Math.random() * 1.8}rem`;
+    layer.appendChild(el);
   }
 }
 
@@ -44,6 +76,8 @@ function initTierButtons() {
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('tier-btn--active'));
+      btn.classList.add('tier-btn--active');
       selectedTier = Number(btn.dataset.tier);
       renderPayPalButton();
       const msg = document.getElementById('entry-message');
@@ -93,12 +127,14 @@ function renderPayPalButton() {
 
         if (result.isWinner && result.prize) {
           if (msg) {
-            msg.textContent = `WINNER! You are donor #${result.donation.globalDonationIndex} and you won: ${result.prize.name}`;
+            msg.innerHTML = `🏆 <strong>WINNER!</strong> You are donor #${result.donation.globalDonationIndex} and you won: <em>${result.prize.name}</em>!<br>
+              <a href="${result.prize.amazonUrl}" target="_blank" rel="noopener noreferrer" class="shop-btn shop-btn--amazon">🛒 View on Amazon</a>
+              <a href="${result.prize.walmartUrl}" target="_blank" rel="noopener noreferrer" class="shop-btn shop-btn--walmart">🛍️ View on Walmart</a>`;
           }
           burstConfetti();
         } else {
           if (msg) {
-            msg.textContent = `Donation complete. You are donor #${result.donation.globalDonationIndex}.`;
+            msg.textContent = `Donation complete! You are donor #${result.donation.globalDonationIndex}. Keep donating — you could be next! 🎉`;
           }
         }
       } catch (err) {

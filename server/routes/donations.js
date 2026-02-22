@@ -1,22 +1,57 @@
-import express from 'express';
-import { pool } from '../db.js';
+import express from "express";
+import pb from "../lib/pbClient.js";
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  const result = await pool.query('SELECT * FROM donations ORDER BY created_at DESC');
-  res.json(result.rows);
+/**
+ * GET /api/donations
+ * Returns the donation history (optional)
+ * If you don't track individual donations, you can remove this.
+ */
+router.get("/", async (req, res) => {
+  try {
+    const records = await pb.collection("donations").getFullList({
+      sort: "-created",
+    });
+
+    res.json(records);
+  } catch (err) {
+    console.error("Error fetching donations:", err);
+    res.status(500).json({ error: "Failed to load donations" });
+  }
 });
 
-router.post('/', async (req, res) => {
-  const { name, amount } = req.body;
+/**
+ * POST /api/donations
+ * Creates a donation + increments donorCount in stats
+ */
+router.post("/", async (req, res) => {
+  try {
+    const { name, amount } = req.body;
 
-  const result = await pool.query(
-    'INSERT INTO donations (name, amount) VALUES ($1, $2) RETURNING *',
-    [name, amount]
-  );
+    // 1. Create donation record
+    const donation = await pb.collection("donations").create({
+      name,
+      amount,
+    });
 
-  res.json(result.rows[0]);
+    // 2. Load stats record
+    const stats = await pb.collection("stats").getFirstListItem("");
+
+    // 3. Increment donorCount
+    const updatedStats = await pb.collection("stats").update(stats.id, {
+      donorCount: stats.donorCount + 1,
+    });
+
+    res.json({
+      success: true,
+      donation,
+      donorCount: updatedStats.donorCount,
+    });
+  } catch (err) {
+    console.error("Error creating donation:", err);
+    res.status(500).json({ error: "Failed to create donation" });
+  }
 });
 
 export default router;

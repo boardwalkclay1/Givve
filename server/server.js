@@ -1,11 +1,11 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import donationsRouter from './routes/donations.js';
-import prizesRouter from './routes/prizes.js';
+import donationsRouter from "./routes/donations.js";
+import prizesRouter from "./routes/prizes.js";
 
 dotenv.config();
 
@@ -18,20 +18,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Path to frontend
-const publicPath = path.resolve(__dirname, '../public');
+const publicPath = path.resolve(__dirname, "../public");
 
 // Serve static frontend files
 app.use(express.static(publicPath));
 
 // API routes
-app.use('/api/donations', donationsRouter);
-app.use('/api/prizes', prizesRouter);
+app.use("/api/donations", donationsRouter);
+app.use("/api/prizes", prizesRouter);
 
-// Fallback to index.html for all other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
+// Fallback to index.html for SPA routing
+app.get("*", (req, res) => {
+  res.sendFile(path.join(publicPath, "index.html"));
 });
 
 // Start server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);

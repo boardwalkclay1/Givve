@@ -1,22 +1,44 @@
-import express from 'express';
-import { pool } from '../db.js';
+import express from "express";
+import pb from "../lib/pbClient.js";
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  const result = await pool.query('SELECT * FROM prizes ORDER BY id ASC');
-  res.json(result.rows);
+/**
+ * GET /api/prizes
+ * Returns all prizes sorted by triggerNumber ASC
+ */
+router.get("/", async (req, res) => {
+  try {
+    const prizes = await pb.collection("prizes").getFullList({
+      sort: "triggerNumber",
+    });
+
+    res.json(prizes);
+  } catch (err) {
+    console.error("Error fetching prizes:", err);
+    res.status(500).json({ error: "Failed to load prizes" });
+  }
 });
 
-router.post('/', async (req, res) => {
-  const { title, description } = req.body;
+/**
+ * POST /api/prizes
+ * Creates a new prize in PocketBase
+ */
+router.post("/", async (req, res) => {
+  try {
+    const { title, description } = req.body;
 
-  const result = await pool.query(
-    'INSERT INTO prizes (title, description) VALUES ($1, $2) RETURNING *',
-    [title, description]
-  );
+    const prize = await pb.collection("prizes").create({
+      title,
+      description,
+      status: "pending",
+    });
 
-  res.json(result.rows[0]);
+    res.json(prize);
+  } catch (err) {
+    console.error("Error creating prize:", err);
+    res.status(500).json({ error: "Failed to create prize" });
+  }
 });
 
 export default router;

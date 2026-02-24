@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import pb from "./lib/pbClient.js";
 import donationsRouter from "./routes/donations.js";
 import prizesRouter from "./routes/prizes.js";
+import authRouter from "./routes/auth.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(express.static(publicPath));
 
 app.use("/api/donations", donationsRouter);
 app.use("/api/prizes", prizesRouter);
+app.use("/api/auth", authRouter);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(publicPath, "index.html"));

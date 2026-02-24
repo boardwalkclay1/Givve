@@ -22,11 +22,11 @@ async function initPrizeReel() {
 
     reel.innerHTML = prizes.map(p => `
       <div class="prize-card">
-        <img src="${p.imageUrl || 'https://via.placeholder.com/200'}" alt="${p.name}" />
-        <h3>${p.name}</h3>
-        <p>Value: $${p.value}</p>
-        <p class="winner-number">Winner: #${p.winnerNumber}</p>
-        ${p.status === 'won' ? `<p class="prize-won">Already Won 🎉</p>` : ''}
+        <img src="${p.image || 'https://via.placeholder.com/200'}" alt="${p.title}" />
+        <h3>${p.title}</h3>
+        <p>${p.description}</p>
+        <p>Trigger: #${p.triggerNumber}</p>
+        <p>Status: ${p.status}</p>
       </div>
     `).join('');
   } catch (err) {
@@ -76,9 +76,7 @@ function renderPayPalButton() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: window.currentUserId || null,
             amount: selectedTier,
-            tier: selectedTier,
             paymentId
           })
         });
@@ -91,16 +89,11 @@ function renderPayPalButton() {
           return;
         }
 
-        if (result.isWinner && result.prize) {
-          if (msg) {
-            msg.textContent = `WINNER! You are donor #${result.donation.globalDonationIndex} and you won: ${result.prize.name}`;
-          }
-          burstConfetti();
-        } else {
-          if (msg) {
-            msg.textContent = `Donation complete. You are donor #${result.donation.globalDonationIndex}.`;
-          }
-        }
+        // PocketBase version returns:
+        // { success, donation, donorCount }
+        msg.textContent = `Donation complete. You are donor #${result.donorCount}.`;
+
+        burstConfetti();
       } catch (err) {
         console.error(err);
         const msg = document.getElementById('entry-message');

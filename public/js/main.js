@@ -1,7 +1,9 @@
 // js/main.js
 // ONE FILE: prize reel + PayPal tiers + real donation call
 
-const API_BASE = '/api';
+// IMPORTANT: point this to your Express backend on Railway
+const API_BASE = 'https://<your-express-backend>.up.railway.app/api';
+
 let selectedTier = null;
 
 // ----------------------
@@ -89,8 +91,6 @@ function renderPayPalButton() {
           return;
         }
 
-        // PocketBase version returns:
-        // { success, donation, donorCount }
         msg.textContent = `Donation complete. You are donor #${result.donorCount}.`;
 
         burstConfetti();

@@ -1,31 +1,70 @@
-import express from 'express';
-import User from '../models/User.js';
+import express from "express";
+import pb from "../lib/pbClient.js";
 
 const router = express.Router();
 
-// Simple signup (no hashing here, you should hash in real life)
-router.post('/signup', async (req, res) => {
-  const { email, password, displayName } = req.body;
-  const existing = await User.findOne({ email });
-  if (existing) return res.status(400).json({ error: 'Email already used' });
+// ----------------------
+// SIGNUP + AUTO LOGIN
+// ----------------------
+router.post("/signup", async (req, res) => {
+  try {
+    const { email, password, displayName } = req.body;
 
-  const user = await User.create({
-    email,
-    passwordHash: password,
-    displayName
-  });
+    // Create user in PocketBase
+    const user = await pb.collection("users").create({
+      email,
+      emailVisibility: true,
+      password,
+      passwordConfirm: password,
+      name: displayName,
+    });
 
-  res.json(user);
+    // Auto-login after signup
+    const authData = await pb.collection("users").authWithPassword(
+      email,
+      password
+    );
+
+    res.json({
+      success: true,
+      user: authData.record,
+      token: authData.token,
+      expires: authData.meta?.tokenExpire,
+    });
+  } catch (err) {
+    console.error("Signup error:", err);
+
+    res.status(400).json({
+      error: err?.response?.data?.message || "Signup failed",
+    });
+  }
 });
 
-// Simple login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || user.passwordHash !== password) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+// ----------------------
+// LOGIN
+// ----------------------
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const authData = await pb.collection("users").authWithPassword(
+      email,
+      password
+    );
+
+    res.json({
+      success: true,
+      user: authData.record,
+      token: authData.token,
+      expires: authData.meta?.tokenExpire,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+
+    res.status(401).json({
+      error: "Invalid credentials",
+    });
   }
-  res.json(user);
 });
 
 export default router;

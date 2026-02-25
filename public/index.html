@@ -4,13 +4,20 @@
   <meta charset="UTF-8" />
   <title>Giveaway Carnival</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.webmanifest" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body class="theme-carnival">
   <header class="hero">
     <h1 class="hero-title">Giveaway Carnival 🎉</h1>
-    <p class="hero-subtitle">Donation-only giveaways. Hit the magic donor number, win the prize.</p>
+    <p class="hero-subtitle">
+      Donation-only giveaways. Hit the magic donor number, win the prize.
+    </p>
   </header>
 
   <nav class="main-nav glass-nav">
@@ -27,14 +34,14 @@
       <ol>
         <li>Pick a donation tier and pay through PayPal.</li>
         <li>Each donation gets a global donor number.</li>
-        <li>If your number matches a prize’s winner number (10th, 20th, etc.), you win.</li>
+        <li>If your number matches a prize’s winner number, you win.</li>
       </ol>
     </section>
 
     <section class="card glass-card">
       <h2>Current & Upcoming Prizes 🎁</h2>
       <div id="prize-reel" class="prize-reel">
-        <!-- Populated by JS from /api/prizes -->
+        <!-- Populated by JS -->
       </div>
     </section>
   </main>

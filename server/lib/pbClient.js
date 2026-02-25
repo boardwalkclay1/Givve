@@ -1,10 +1,7 @@
 import PocketBase from "pocketbase";
 
-const pb = new PocketBase(process.env.PB_URL);
+const pb = new PocketBase(process.env.POCKETBASE_URL);
 
-await pb.admins.authWithPassword(
-  process.env.PB_ADMIN_EMAIL,
-  process.env.PB_ADMIN_PASSWORD
-);
+// No admin login here — backend routes authenticate users normally.
 
 export default pb;

@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
     const donations = await pb.collection("donations").getFullList({
       sort: "-created",
     });
+
     res.json(donations);
   } catch (err) {
     console.error("Error fetching donations:", err);
@@ -19,15 +20,24 @@ router.get("/", async (req, res) => {
 // POST new donation + increment donorCount
 router.post("/", async (req, res) => {
   try {
-    const { name, amount } = req.body;
+    const { amount, paymentId } = req.body;
 
+    if (!amount || !paymentId) {
+      return res.status(400).json({
+        error: "Missing amount or paymentId",
+      });
+    }
+
+    // Create donation record
     const donation = await pb.collection("donations").create({
-      name,
       amount,
+      paymentId,
     });
 
-    const stats = await pb.collection("stats").getFirstListItem("");
+    // Fetch stats record (only one exists)
+    const stats = await pb.collection("stats").getFirstListItem("id != ''");
 
+    // Increment donor count
     const updatedStats = await pb.collection("stats").update(stats.id, {
       donorCount: stats.donorCount + 1,
     });

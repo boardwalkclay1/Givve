@@ -13,9 +13,10 @@ dotenv.config();
 
 const app = express();
 
+// CORS — lock to your real domain
 app.use(
   cors({
-    origin: process.env.PUBLIC_URL || "*",
+    origin: process.env.PUBLIC_URL || "https://givve.store",
   })
 );
 
@@ -43,7 +44,14 @@ app.get("*", (req, res) => {
 
 // PORT fix for Railway
 const PORT = process.env.PORT || 3000;
+
+// Startup logs
 app.listen(PORT, () => {
   console.log(`Givve server running on port ${PORT}`);
-  console.log(`Connected to PocketBase at ${process.env.POCKETBASE_URL}`);
+
+  if (!process.env.POCKETBASE_URL) {
+    console.warn("⚠️  Missing POCKETBASE_URL in .env");
+  } else {
+    console.log(`PocketBase connected at ${process.env.POCKETBASE_URL}`);
+  }
 });

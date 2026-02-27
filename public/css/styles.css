@@ -10,14 +10,32 @@
   box-sizing: border-box;
 }
 
+/* FULL-SCREEN BACKGROUND IMAGE */
 body.theme-carnival {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: radial-gradient(circle at top, var(--purple), var(--bg-dark));
+
+  /* Background image */
+  background-image: url("../assets/photos/givve.jpeg"),
+                    radial-gradient(circle at top, var(--purple), var(--bg-dark));
+
+  background-size: cover;          /* fills screen */
+  background-position: center;     /* centers image */
+  background-repeat: no-repeat;    /* no tiling */
+  background-attachment: fixed;    /* fixed on desktop */
+
   color: var(--white);
   min-height: 100vh;
 }
 
+/* iOS FIX — mobile Safari ignores background-attachment: fixed */
+@supports (-webkit-touch-callout: none) {
+  body.theme-carnival {
+    background-attachment: scroll;
+  }
+}
+
+/* HEADER */
 .site-header {
   text-align: center;
   padding: 2rem 1rem 1rem;
@@ -30,6 +48,7 @@ body.theme-carnival {
   text-shadow: 0 0 10px rgba(0,0,0,0.6);
 }
 
+/* NAVIGATION */
 .main-nav {
   display: flex;
   flex-wrap: wrap;
@@ -49,6 +68,7 @@ body.theme-carnival {
   font-size: 0.9rem;
 }
 
+/* MAIN CONTENT */
 main {
   padding: 0 1rem 3rem;
   max-width: 960px;
@@ -59,6 +79,7 @@ section {
   margin-bottom: 1.5rem;
 }
 
+/* CARDS */
 .card,
 .card-list .card {
   background: rgba(255,255,255,0.08);
@@ -73,6 +94,7 @@ section {
   gap: 1rem;
 }
 
+/* FORMS */
 label {
   display: block;
   margin-bottom: 0.75rem;
@@ -89,6 +111,7 @@ textarea {
   margin-top: 0.25rem;
 }
 
+/* BUTTONS */
 button {
   border: none;
   border-radius: 999px;
@@ -104,7 +127,7 @@ button:hover {
   filter: brightness(1.05);
 }
 
-/* Tiers */
+/* TIERS */
 .tier-grid {
   display: flex;
   flex-wrap: wrap;
@@ -115,7 +138,7 @@ button:hover {
   flex: 1 1 90px;
 }
 
-/* Prize reel */
+/* PRIZE REEL */
 .prize-reel {
   display: flex;
   gap: 1rem;
@@ -130,7 +153,7 @@ button:hover {
   padding: 0.75rem;
 }
 
-/* Badges */
+/* BADGES */
 .badge-row {
   display: flex;
   flex-wrap: wrap;
@@ -150,7 +173,7 @@ button:hover {
   opacity: 0.7;
 }
 
-/* Winner banner */
+/* WINNER BANNER */
 #winner-banner {
   position: fixed;
   bottom: 1rem;
@@ -164,7 +187,7 @@ button:hover {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Confetti layer */
+/* CONFETTI */
 #confetti-layer {
   pointer-events: none;
   position: fixed;
@@ -178,7 +201,7 @@ button:hover {
   z-index: -1;
 }
 
-/* Clown pop-ins */
+/* CLOWN POP-INS */
 .clown-pop {
   position: fixed;
   bottom: -50px;

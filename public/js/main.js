@@ -2,7 +2,7 @@
 // ONE FILE: prize reel + PayPal tiers + real donation call
 
 // IMPORTANT: point this to your Express backend on Railway
-const API_BASE = 'https://<your-express-backend>.up.railway.app/api';
+const API_BASE = 'https://nodejs-production-49cac.up.railway.app/api';
 
 let selectedTier = null;
 

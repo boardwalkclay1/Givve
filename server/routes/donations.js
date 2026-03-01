@@ -1,23 +1,28 @@
+// server/routes/donations.js
 import express from "express";
-import pb from "../lib/pbClient.js";
+import db from "../lib/db.js";
 
 const router = express.Router();
 
+// --------------------------------------------------
 // GET all donations
+// --------------------------------------------------
 router.get("/", async (req, res) => {
   try {
-    const donations = await pb.collection("donations").getFullList({
-      sort: "-created",
-    });
+    const result = await db.query(
+      `SELECT * FROM donations ORDER BY created_at DESC`
+    );
 
-    res.json(donations);
+    res.json(result.rows);
   } catch (err) {
-    console.error("Error fetching donations:", err);
+    console.error("POSTGRES DONATIONS FETCH ERROR:", err);
     res.status(500).json({ error: "Failed to load donations" });
   }
 });
 
+// --------------------------------------------------
 // POST new donation + increment donorCount
+// --------------------------------------------------
 router.post("/", async (req, res) => {
   try {
     const { amount, paymentId } = req.body;
@@ -29,26 +34,44 @@ router.post("/", async (req, res) => {
     }
 
     // Create donation record
-    const donation = await pb.collection("donations").create({
-      amount,
-      paymentId,
-    });
+    const donationResult = await db.query(
+      `INSERT INTO donations (amount, payment_id)
+       VALUES ($1, $2)
+       RETURNING *`,
+      [amount, paymentId]
+    );
 
-    // Fetch stats record (only one exists)
-    const stats = await pb.collection("stats").getFirstListItem("id != ''");
+    const donation = donationResult.rows[0];
 
-    // Increment donor count
-    const updatedStats = await pb.collection("stats").update(stats.id, {
-      donorCount: stats.donorCount + 1,
-    });
+    // Fetch stats row (only one)
+    const statsResult = await db.query(`SELECT * FROM stats LIMIT 1`);
+    let stats = statsResult.rows[0];
+
+    // If stats row doesn't exist, create it
+    if (!stats) {
+      const createStats = await db.query(
+        `INSERT INTO stats (donor_count)
+         VALUES (1)
+         RETURNING *`
+      );
+      stats = createStats.rows[0];
+    } else {
+      // Increment donor count
+      const updatedStats = await db.query(
+        `UPDATE stats
+         SET donor_count = donor_count + 1
+         RETURNING *`
+      );
+      stats = updatedStats.rows[0];
+    }
 
     res.json({
       success: true,
       donation,
-      donorCount: updatedStats.donorCount,
+      donorCount: stats.donor_count,
     });
   } catch (err) {
-    console.error("Error creating donation:", err);
+    console.error("POSTGRES DONATION CREATE ERROR:", err);
     res.status(500).json({ error: "Failed to create donation" });
   }
 });

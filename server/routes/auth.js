@@ -1,7 +1,11 @@
+// server/routes/auth.js
 import express from "express";
-import pb from "../lib/pbClient.js";
+import db from "../lib/db.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_key";
 
 // ----------------------
 // SIGNUP + AUTO LOGIN
@@ -10,33 +14,45 @@ router.post("/signup", async (req, res) => {
   try {
     const { email, password, displayName } = req.body;
 
-    // Create user
-    const user = await pb.collection("users").create({
-      email,
-      emailVisibility: true,
-      password,
-      passwordConfirm: password,
-      name: displayName,
-    });
+    // Check if email exists
+    const existing = await db.query(
+      "SELECT id FROM users WHERE email = $1",
+      [email]
+    );
 
-    // Auto-login after signup
-    const authData = await pb.collection("users").authWithPassword(
-      email,
-      password
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: "Email already in use" });
+    }
+
+    // Hash password
+    const hash = await bcrypt.hash(password, 10);
+
+    // Create user
+    const result = await db.query(
+      `INSERT INTO users (email, password_hash, display_name)
+       VALUES ($1, $2, $3)
+       RETURNING id, email, display_name`,
+      [email, hash, displayName]
+    );
+
+    const user = result.rows[0];
+
+    // Auto-login: create JWT
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
     res.json({
       success: true,
-      user: authData.record,
-      token: authData.token,
-      expires: authData.meta?.tokenExpire,
+      user,
+      token,
+      expires: Date.now() + 7 * 24 * 60 * 60 * 1000
     });
   } catch (err) {
     console.error("Signup error:", err);
-
-    res.status(400).json({
-      error: err?.response?.data?.message || "Signup failed",
-    });
+    res.status(400).json({ error: "Signup failed" });
   }
 });
 
@@ -47,23 +63,44 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const authData = await pb.collection("users").authWithPassword(
-      email,
-      password
+    // Find user
+    const result = await db.query(
+      "SELECT id, email, password_hash, display_name FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const user = result.rows[0];
+
+    // Check password
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Create JWT
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
     res.json({
       success: true,
-      user: authData.record,
-      token: authData.token,
-      expires: authData.meta?.tokenExpire,
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.display_name
+      },
+      token,
+      expires: Date.now() + 7 * 24 * 60 * 60 * 1000
     });
   } catch (err) {
     console.error("Login error:", err);
-
-    res.status(401).json({
-      error: "Invalid credentials",
-    });
+    res.status(401).json({ error: "Invalid credentials" });
   }
 });
 

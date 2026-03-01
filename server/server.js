@@ -1,10 +1,11 @@
+// server/server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import pb from "./lib/pbClient.js";
+import db from "./lib/db.js";               // NEW: Postgres client
 import donationsRouter from "./routes/donations.js";
 import prizesRouter from "./routes/prizes.js";
 import authRouter from "./routes/auth.js";
@@ -32,7 +33,7 @@ const publicPath = path.resolve(__dirname, "../public");
 // Serve static frontend files
 app.use(express.static(publicPath));
 
-// API routes
+// API routes (these will be SQL-powered)
 app.use("/api/donations", donationsRouter);
 app.use("/api/prizes", prizesRouter);
 app.use("/api/auth", authRouter);
@@ -45,13 +46,14 @@ app.get("*", (req, res) => {
 // PORT fix for Railway
 const PORT = process.env.PORT || 3000;
 
-// Startup logs
-app.listen(PORT, () => {
+// Startup logs + DB check
+app.listen(PORT, async () => {
   console.log(`Givve server running on port ${PORT}`);
 
-  if (!process.env.POCKETBASE_URL) {
-    console.warn("⚠️  Missing POCKETBASE_URL in .env");
-  } else {
-    console.log(`PocketBase connected at ${process.env.POCKETBASE_URL}`);
+  try {
+    await db.query("SELECT NOW()");
+    console.log("Postgres connection OK");
+  } catch (err) {
+    console.error("❌ Postgres connection FAILED:", err);
   }
 });

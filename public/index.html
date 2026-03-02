@@ -1,24 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Giveaway Carnival 🎉</title>
 
   <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" href="/icons/givve.png" />
 
-  <!-- Social Preview -->
+  <!-- Social Preview (Open Graph only) -->
   <meta property="og:title" content="Giveaway Carnival" />
   <meta property="og:description" content="Donation-only giveaways. Hit the magic donor number, win the prize." />
   <meta property="og:image" content="/icons/givve.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://givve.store" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Giveaway Carnival" />
-  <meta name="twitter:description" content="Donation-only giveaways. Hit the magic donor number, win the prize." />
-  <meta name="twitter:image" content="/icons/givve.png" />
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.webmanifest" />
@@ -26,54 +20,3 @@
   <!-- Global Styles -->
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-
-<body class="theme-carnival">
-
-  <!-- HERO SECTION -->
-  <header class="hero glass-hero">
-    <h1 class="hero-title">Giveaway Carnival 🎉</h1>
-    <p class="hero-subtitle">
-      Donation-only giveaways. Hit the magic donor number, win the prize.
-    </p>
-  </header>
-
-  <!-- NAVIGATION -->
-  <nav class="main-nav glass-nav">
-    <a href="app.html">Enter Giveaway</a>
-    <a href="suggest.html">Suggest Item</a>
-    <a href="vote.html">Vote</a>
-    <a href="account.html">My Account</a>
-    <a href="winners.html">Winners</a>
-  </nav>
-
-  <!-- MAIN CONTENT -->
-  <main class="content">
-
-    <!-- HOW IT WORKS -->
-    <section class="card glass-card">
-      <h2>How It Works</h2>
-      <ol>
-        <li>Pick a donation tier and pay through PayPal.</li>
-        <li>Each donation gets a global donor number.</li>
-        <li>If your number matches a prize’s winner number, you win.</li>
-      </ol>
-    </section>
-
-    <!-- PRIZE REEL -->
-    <section class="card glass-card">
-      <h2>Current & Upcoming Prizes 🎁</h2>
-      <div id="prize-reel" class="prize-reel">
-        <!-- Populated by JS -->
-      </div>
-    </section>
-
-  </main>
-
-  <!-- CONFETTI LAYER -->
-  <div id="confetti-layer"></div>
-
-  <!-- MAIN JS -->
-  <script src="/js/main.js" type="module"></script>
-
-</body>
-</html>

@@ -1,7 +1,7 @@
 // server/routes/auth.js
 import express from "express";
 import db from "../lib/db.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";   // ✅ FIXED
 import jwt from "jsonwebtoken";
 
 const router = express.Router();

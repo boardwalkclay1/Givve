@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import db from "./lib/db.js";               // NEW: Postgres client
+import db from "./lib/db.js";
 import donationsRouter from "./routes/donations.js";
 import prizesRouter from "./routes/prizes.js";
 import authRouter from "./routes/auth.js";
@@ -14,16 +14,37 @@ dotenv.config();
 
 const app = express();
 
-// CORS — lock to your real domain
+// -----------------------------
+// CORS — allow frontend + local
+// -----------------------------
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://givve.store",
+  "https://www.givve.store"
+];
+
 app.use(
   cors({
-    origin: process.env.PUBLIC_URL || "https://givve.store",
+    origin: function (origin, callback) {
+      // Allow mobile apps, curl, Postman (no origin)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true
   })
 );
 
 app.use(express.json());
 
+// -----------------------------
 // Resolve directory
+// -----------------------------
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -33,20 +54,25 @@ const publicPath = path.resolve(__dirname, "../public");
 // Serve static frontend files
 app.use(express.static(publicPath));
 
-// API routes (these will be SQL-powered)
+// -----------------------------
+// API routes
+// -----------------------------
 app.use("/api/donations", donationsRouter);
 app.use("/api/prizes", prizesRouter);
 app.use("/api/auth", authRouter);
 
+// -----------------------------
 // SPA fallback
+// -----------------------------
 app.get("*", (req, res) => {
   res.sendFile(path.join(publicPath, "index.html"));
 });
 
+// -----------------------------
 // PORT fix for Railway
+// -----------------------------
 const PORT = process.env.PORT || 3000;
 
-// Startup logs + DB check
 app.listen(PORT, async () => {
   console.log(`Givve server running on port ${PORT}`);
 
